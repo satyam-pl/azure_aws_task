@@ -36,5 +36,29 @@ jobs:
           terraform apply -auto-approve
         working-directory: ${{ steps.provider.outputs.provider }}
 
-      # Add steps for deploying the Java web app to the provisioned infrastructure
-      # This could involve using build tools, deployment scripts, etc., specific to your Java application and infrastructure.
+      - name: Deploy Java Web App to Azure
+        if: ${{ steps.provider.outputs.provider == 'azure' }}
+        run: |
+          cd java-web-app
+          mvn clean install
+          # Adjust the deploy command as per your specific deployment process
+          # Example:
+          # - az login
+          # - az webapp create ...
+          # - az webapp deploy ...
+
+      - name: Upload artifact for deployment job
+        if: ${{ steps.provider.outputs.provider == 'azure' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: java-app
+          path: '${{ github.workspace }}/java-web-app/target/*.jar'
+
+      - name: Deploy to Azure Web App
+        if: ${{ steps.provider.outputs.provider == 'azure' }}
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ steps.terraform.outputs.azure_web_app_name }}
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D22C4CDE61E3434EA952E27D09520BD4 }}
+          package: '*.jar'
