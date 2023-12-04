@@ -25,5 +25,11 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "example" {
   name     = "azure_aws_task"
-  location = "East US"
+  location = "East Asia"
+}
+
+resource "azurerm_app_service" "example" {
+  name                = "java-aws-azure-app-service" # Define your App Service name
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
 }
