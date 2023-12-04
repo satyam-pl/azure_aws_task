@@ -8,23 +8,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Ask for Cloud Provider
-        id: provider
-        run: |
-          echo "::set-output name=provider::azure"
-          
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
+      - name: Set Cloud Provider to Azure
+        id: provider
+        run: echo "::set-output name=provider::azure"
+          
       - name: Install Azure CLI
         uses: azure/CLI@v1
         with:
-          azcliversion: 2.30.0 # You can specify the version you need
+          azcliversion: 2.30.0
 
       - name: Azure Login
         uses: azure/login@v1
@@ -37,29 +31,13 @@ jobs:
               "tenantId": "ce3685eb-9b4e-4652-a942-7ea5cda9e6c0"
             }
 
-      - name: Terraform Init & Apply
-        run: |
-          provider=${{ steps.provider.outputs.provider }}
-          if [ "$provider" = "aws" ]; then
-            cd "${{ github.workspace }}/aws" || exit 1
-          elif [ "$provider" = "azure" ]; then
-            cd "${{ github.workspace }}/azure" || exit 1
-          else
-            echo "Invalid provider selected. Please choose 'aws' or 'azure'."
-            exit 1
-          fi
-          terraform init
-          terraform apply -auto-approve
-        working-directory: ${{ steps.provider.outputs.provider }}
-
       - name: Deploy Java Web App to Azure
         if: ${{ steps.provider.outputs.provider == 'azure' }}
         run: |
           cd java-web-app
           mvn clean install
-          # Adjust the deploy command as per your specific deployment process
-          # Example:
-          # - az login
+          # Replace these commands with your deployment steps using Azure CLI
+          # For instance:
           # - az webapp create ...
           # - az webapp deploy ...
 
@@ -68,13 +46,13 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: java-app
-          path: '${{ github.workspace }}/java-web-app/target/*.jar'
+          path: 'java-web-app/target/*.jar'
 
       - name: Deploy to Azure Web App
         if: ${{ steps.provider.outputs.provider == 'azure' }}
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ steps.terraform.outputs.azure_web_app_name }}
+          app-name: 'your-azure-web-app-name'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D22C4CDE61E3434EA952E27D09520BD4 }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: '*.jar'
