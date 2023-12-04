@@ -23,9 +23,9 @@ jobs:
         run: |
           provider=${{ steps.provider.outputs.provider }}
           if [ "$provider" = "aws" ]; then
-            cd aws
+            cd "$REPO_ROOT/aws" || exit 1
           elif [ "$provider" = "azure" ]; then
-            cd azure
+            cd "$REPO_ROOT/azure" || exit 1
           else
             echo "Invalid provider selected. Please choose 'aws' or 'azure'."
             exit 1
