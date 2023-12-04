@@ -11,8 +11,6 @@ jobs:
       - name: Ask for Cloud Provider
         id: provider
         run: |
-          echo "Which cloud provider do you want to use?"
-          read -p "Enter 'aws' or 'azure': " selected_provider
           echo "::set-output name=provider::$selected_provider"
 
       - name: Checkout Repository
