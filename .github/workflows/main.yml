@@ -11,7 +11,7 @@ jobs:
       - name: Ask for Cloud Provider
         id: provider
         run: |
-          echo "::set-output name=provider::$selected_provider"
+          echo "::set-output name=provider::azure"
 
       - name: Checkout Repository
         uses: actions/checkout@v2
