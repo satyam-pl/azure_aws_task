@@ -21,6 +21,11 @@ jobs:
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }} # Use your Azure service principal credentials here
+
       - name: Terraform Init & Apply
         run: |
           provider=${{ steps.provider.outputs.provider }}
