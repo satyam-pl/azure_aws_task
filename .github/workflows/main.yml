@@ -29,7 +29,13 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }} # Use your Azure service principal credentials here
+          creds: |
+            {
+              "clientId": "e12a2d0e-c7a8-497a-9c6a-f6feb27b10ac",
+              "clientSecret": "~Ik8Q~u1dpSqwite8M6b-y4doLRhIEZPVpcmFcx4",
+              "subscriptionId": "fafa58df-5f3a-4423-91ba-552d42b280dd",
+              "tenantId": "ce3685eb-9b4e-4652-a942-7ea5cda9e6c0"
+            }
 
       - name: Terraform Init & Apply
         run: |
