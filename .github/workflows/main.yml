@@ -55,11 +55,14 @@ jobs:
           name: java-app
           path: 'java-web-app/target/*.jar'
 
-      - name: Deploy to Azure Web App
+      - name: Deploy Java Web App to Azure
         if: ${{ steps.provider.outputs.provider == 'azure' }}
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'java-aws-azure-my-app-service'
-          slot-name: 'Production'
-          publish-profile: ./appservice.publishsettings
-          package: '*.jar'
+        run: |
+          cd java-web-app
+          mvn clean install
+
+          az webapp deploy \
+            --name java-aws-azure-my-app-service \
+            --resource-group azure_aws_task \
+            --src 'java-web-app/target/*.jar' \
+            --type jar
