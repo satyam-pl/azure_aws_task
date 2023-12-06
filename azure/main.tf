@@ -24,7 +24,7 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "example" {
-  name     = "azure_aws_task"
+  name     = "azure_aws_task6"
   location = "East Asia"
 }
 
@@ -40,7 +40,7 @@ resource "azurerm_app_service_plan" "example" {
 }
 
 resource "azurerm_app_service" "example" {
-  name                = "java-aws-azure-my-app-service"  # Define your App Service name
+  name                = "java-aws-azure-my-app-service6"  # Define your App Service name
   location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
   app_service_plan_id = azurerm_app_service_plan.example.id  # Reference the App Service Plan ID
