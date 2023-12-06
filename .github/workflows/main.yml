@@ -64,5 +64,5 @@ jobs:
           az webapp deploy \
             --name java-aws-azure-my-app-service \
             --resource-group azure_aws_task \
-            --src 'java-web-app/target/*.jar' \
+            --src-path 'java-web-app/target/*.jar' \
             --type jar
