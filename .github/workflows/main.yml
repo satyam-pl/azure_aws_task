@@ -11,15 +11,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      # Install Azure CLI
+      - name: Install Azure CLI
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
       - name: Set Cloud Provider to Azure
         id: provider
         run: echo "::set-output name=provider::azure"
           
-      - name: Install Azure CLI
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.30.0
-
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -30,7 +30,6 @@ jobs:
               "subscriptionId": "fafa58df-5f3a-4423-91ba-552d42b280dd",
               "tenantId": "ce3685eb-9b4e-4652-a942-7ea5cda9e6c0"
             }
-
       - name: Deploy Java Web App to Azure
         if: ${{ steps.provider.outputs.provider == 'azure' }}
         run: |
@@ -40,7 +39,6 @@ jobs:
           # For instance:
           # - az webapp create ...
           # - az webapp deploy ...
-
       - name: Upload artifact for deployment job
         if: ${{ steps.provider.outputs.provider == 'azure' }}
         uses: actions/upload-artifact@v2
