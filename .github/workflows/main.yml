@@ -15,7 +15,6 @@ jobs:
       - name: Install Azure CLI
         run: |
           curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-
       - name: Set Cloud Provider to Azure
         id: provider
         run: echo "::set-output name=provider::azure"
@@ -60,9 +59,8 @@ jobs:
         run: |
           cd java-web-app
           mvn clean install
-
           az webapp deploy \
             --name java-aws-azure-my-app-service \
             --resource-group azure_aws_task \
-            --src-path 'java-web-app/target/*.jar' \
+            --src 'java-web-app/target/*.jar' \
             --type jar
