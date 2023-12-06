@@ -60,7 +60,7 @@ jobs:
           cd java-web-app
           mvn clean install
           az webapp deploy \
-            --name java-aws-azure-my-app-service \
+            --name java-aws-azure-my-app-service6 \
             --resource-group azure_aws_task \
-            --src 'java-web-app/target/*.jar' \
+            --src-path 'java-web-app/target/*.jar' \
             --type jar
