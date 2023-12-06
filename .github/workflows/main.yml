@@ -30,6 +30,15 @@ jobs:
               "subscriptionId": "fafa58df-5f3a-4423-91ba-552d42b280dd",
               "tenantId": "ce3685eb-9b4e-4652-a942-7ea5cda9e6c0"
             }
+      - name: Retrieve Azure App Service Publish Profile
+        if: ${{ steps.provider.outputs.provider == 'azure' }}
+        run: |
+          az webapp deployment list-publishing-profiles \
+            --name java-aws-azure-my-app-service \
+            --resource-group azure_aws_task \
+            --query "[?contains(profileName, 'FTP')].[publishUrl, userName, userPWD]" \
+            --output tsv > appservice.publishsettings
+            
       - name: Deploy Java Web App to Azure
         if: ${{ steps.provider.outputs.provider == 'azure' }}
         run: |
@@ -50,7 +59,7 @@ jobs:
         if: ${{ steps.provider.outputs.provider == 'azure' }}
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'your-azure-web-app-name'
+          app-name: 'java-aws-azure-my-app-service'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          publish-profile: ./appservice.publishsettings
           package: '*.jar'
