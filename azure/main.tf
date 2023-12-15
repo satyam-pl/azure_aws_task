@@ -5,6 +5,12 @@ terraform {
       version = ">=2.0"
     }
   }
+provider "azurerm" {
+  # Other provider configurations...
+
+  # Use the skip_provider_registration flag to bypass automatic registration
+  skip_provider_registration = true
+}
 
   backend "remote" {
     organization = "satyam-patel-trident"
