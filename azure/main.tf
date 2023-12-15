@@ -5,12 +5,6 @@ terraform {
       version = ">=2.0"
     }
   }
-provider "azurerm" {
-  # Other provider configurations...
-
-  # Use the skip_provider_registration flag to bypass automatic registration
-  skip_provider_registration = true
-}
 
   backend "remote" {
     organization = "satyam-patel-trident"
@@ -27,6 +21,9 @@ provider "azurerm" {
   client_id       = "5a287d06-d8c1-4d22-845d-6729b2c420e6"
   client_secret   = "5Uz8Q~n30IgLwKr7YmFfv2o.cxmi1V9wtKbWWap6"
   tenant_id       = "5a97c230-4719-47ba-a5bf-bf343a0926ec"
+
+  # Use skip_provider_registration to bypass automatic registration
+  skip_provider_registration = true
 }
 
 resource "azurerm_resource_group" "example" {
@@ -34,7 +31,7 @@ resource "azurerm_resource_group" "example" {
   location = "East Asia"
 }
 
-resource "azurerm_app_service_plan" "example" {
+resource "azurerm_service_plan" "example" {
   name                = "free-app-service-plan"  # Define your App Service Plan name
   location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
@@ -49,5 +46,5 @@ resource "azurerm_app_service" "example" {
   name                = "java-aws-azure-my-app-service6"  # Define your App Service name
   location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
-  app_service_plan_id = azurerm_app_service_plan.example.id  # Reference the App Service Plan ID
+  app_service_plan_id = azurerm_service_plan.example.id  # Reference the App Service Plan ID
 }
