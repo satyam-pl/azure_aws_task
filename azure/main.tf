@@ -16,10 +16,10 @@ terraform {
  
 provider "azurerm" {
   features {}
-   client_id             = "c6632e3a-7468-45be-8356-c77ae9b19ef7"
-    client_secret         = "kwD8Q~dV_-Cr7ul2jtt2dN4mvBDAY03GwUTRCcJl"
-    tenant_id             = "f05e717f-ceec-435e-8143-d88720bab0be"
-    subscription_id       = "594f8c5b-b47f-4e30-8adc-56b83869fcb9"
+  subscription_id = "4b3d27d7-ff8a-428b-acaa-856bcf94bba6"
+  client_id       = "5a287d06-d8c1-4d22-845d-6729b2c420e6"
+  client_secret   = "5Uz8Q~n30IgLwKr7YmFfv2o.cxmi1V9wtKbWWap6"
+  tenant_id       = "5a97c230-4719-47ba-a5bf-bf343a0926ec"
   # Use skip_provider_registration to bypass automatic registration
   skip_provider_registration = true
 }
