@@ -12,6 +12,7 @@ jobs:
         id: provider
         run: |
           echo "::set-output name=provider::azure"
+
       - name: Checkout Repository
         uses: actions/checkout@v2
 
@@ -48,33 +49,17 @@ jobs:
 
       - name: Fetch Publish Profile
         run: |
-          az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+          az login --service-principal -u 5a287d06-d8c1-4d22-845d-6729b2c420e6 -p 5Uz8Q~n30IgLwKr7YmFfv2o.cxmi1V9wtKbWWap6  --tenant 5a97c230-4719-47ba-a5bf-bf343a0926ec
           az webapp deployment list-publishing-profiles --name java-aws-azure-my-app-service6 --resource-group azure_aws_task6 --query "[?publishMethod=='FTP'].publishUrl" -o tsv > publishProfile.txt
           echo "AZUREAPPSERVICE_PUBLISHPROFILE=$(<publishProfile.txt)" >> $GITHUB_ENV
 
       - name: Deploy Java Web App to Azure
         if: ${{ steps.provider.outputs.provider == 'azure' }}
         run: |
-          cd java-web-app
-          mvn clean install
-          # Adjust the deploy command as per your specific deployment process
-          # Example:
-          # - az login
-          # - az webapp create ...
-          # - az webapp deploy ...
+          az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+          AZUREAPPSERVICE_PUBLISHPROFILE=$(az webapp deployment list-publishing-profiles --name java-aws-azure-my-app-service6 --resource-group azure_aws_task6 --query "[?publishMethod=='FTP'].publishUrl" -o tsv)
+          echo "Deploying using fetched publish profile..."
+          az webapp deploy --name java-aws-azure-my-app-service6 --slot Production --package '*.jar' --publish-profile "$AZUREAPPSERVICE_PUBLISHPROFILE"
 
-      - name: Upload artifact for deployment job
-        if: ${{ steps.provider.outputs.provider == 'azure' }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: java-app
-          path: '${{ github.workspace }}/java-web-app/target/*.jar'
-
-      - name: Deploy to Azure Web App
-        if: ${{ steps.provider.outputs.provider == 'azure' }}
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'java-aws-azure-my-app-service6'
-          slot-name: 'Production'
-          publish-profile: ${{ env.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: '*.jar'
+      - name: Clean up sensitive files
+        run: rm publishProfile.txt
