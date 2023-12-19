@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">=2.0"
+  
     }
   }
 
@@ -33,10 +33,7 @@ resource "azurerm_service_plan" "example" {
   location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
   os_type             = "Linux"
-  sku {
-    tier = "Standard"
-    size = "S1"
-  }
+  sku_name            ="S1"
 }
 
 resource "azurerm_app_service" "example" {
