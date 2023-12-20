@@ -1,9 +1,4 @@
 
-# Configure the Azure provider
-provider "azurerm" {
-  features {}
-}
-
 # Authenticate using Service Principal credentials
 provider "azurerm" {
   features {}
