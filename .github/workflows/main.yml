@@ -47,7 +47,7 @@ jobs:
             }
       - name: Fetch Publish Profile
         run: |
-          az login --service-principal -u 5a287d06-d8c1-4d22-845d-6729b2c420e6 -p 5Uz8Q~n30IgLwKr7YmFfv2o.cxmi1V9wtKbWWap6  --tenant 5a97c230-4719-47ba-a5bf-bf343a0926ec
+          az login --service-principal -u ce6fc630-ca7a-4041-a380-6d80c5d78ebf -p s0A8Q~MWROMoz9sO5DM~My3GuQpgEHE4K1_AuaYx  --tenant 5a97c230-4719-47ba-a5bf-bf343a0926ec
           az webapp deployment list-publishing-profiles --name java-aws-azure-my-app-service6 --resource-group azure_aws_task6 --query "[?publishMethod=='FTP'].publishUrl" -o tsv > publishProfile.txt
           echo "AZUREAPPSERVICE_PUBLISHPROFILE=$(<publishProfile.txt)" >> $GITHUB_ENV
       - name: Deploy Java Web App to Azure
