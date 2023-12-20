@@ -10,7 +10,7 @@ provider "azurerm" {
 
 # Define the resource group
 resource "azurerm_resource_group" "example" {
-  name     = "myResourceGroup"
+  name     = "myResourceGroup987"
   location = "East US"  # Replace with your preferred Azure region
 }
 
