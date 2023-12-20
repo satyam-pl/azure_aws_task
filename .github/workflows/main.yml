@@ -1,32 +1,61 @@
-name: Terraform Workflow
+name: Deploy Java Web App
 
 on:
-  push:
-    branches:
-      - main  # Replace with your main branch name
+  workflow_dispatch: # Manually triggered workflow
 
 jobs:
-  terraform:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Ask for Cloud Provider
+        id: provider
+        run: |
+          echo "::set-output name=provider::azure"
+      - name: Checkout Repository
         uses: actions/checkout@v2
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-      - name: Terraform Init
+      - name: Terraform Init & Apply
         run: |
-          cd azure  # Navigate to the azure folder
+          provider=${{ steps.provider.outputs.provider }}
+          if [ "$provider" = "aws" ]; then
+            cd "${{ github.workspace }}/aws" || exit 1
+          elif [ "$provider" = "azure" ]; then
+            cd "${{ github.workspace }}/azure" || exit 1
+          else
+            echo "Invalid provider selected. Please choose 'aws' or 'azure'."
+            exit 1
+          fi
           terraform init
+          terraform apply -auto-approve
+        working-directory: ${{ steps.provider.outputs.provider }}
 
-      - name: Terraform Plan
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: |
+            {
+              "clientId": "ce6fc630-ca7a-4041-a380-6d80c5d78ebf",
+              "clientSecret": "s0A8Q~MWROMoz9sO5DM~My3GuQpgEHE4K1_AuaYx",
+              "tenantId": "5a97c230-4719-47ba-a5bf-bf343a0926ec",
+              "subscriptionId": "4b3d27d7-ff8a-428b-acaa-856bcf94bba6"
+            }
+      - name: Fetch Publish Profile
         run: |
-          cd azure  # Navigate to the azure folder
-          terraform plan -out=tfplan
-
-      - name: Terraform Apply
+          az login --service-principal -u 5a287d06-d8c1-4d22-845d-6729b2c420e6 -p 5Uz8Q~n30IgLwKr7YmFfv2o.cxmi1V9wtKbWWap6  --tenant 5a97c230-4719-47ba-a5bf-bf343a0926ec
+          az webapp deployment list-publishing-profiles --name java-aws-azure-my-app-service6 --resource-group azure_aws_task6 --query "[?publishMethod=='FTP'].publishUrl" -o tsv > publishProfile.txt
+          echo "AZUREAPPSERVICE_PUBLISHPROFILE=$(<publishProfile.txt)" >> $GITHUB_ENV
+      - name: Deploy Java Web App to Azure
+        if: ${{ steps.provider.outputs.provider == 'azure' }}
         run: |
-          cd azure  # Navigate to the azure folder
-          terraform apply -auto-approve tfplan
+          az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+          AZUREAPPSERVICE_PUBLISHPROFILE=$(az webapp deployment list-publishing-profiles --name java-aws-azure-my-app-service6 --resource-group azure_aws_task6 --query "[?publishMethod=='FTP'].publishUrl" -o tsv)
+          echo "Deploying using fetched publish profile..."
+          az webapp deploy --name java-aws-azure-my-app-service6 --slot Production --package '*.jar' --publish-profile "$AZUREAPPSERVICE_PUBLISHPROFILE"
+      - name: Clean up sensitive files
+        run: rm publishProfile.txt
