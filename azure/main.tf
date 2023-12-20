@@ -10,7 +10,7 @@ provider "azurerm" {
 
 # Define the resource group
 resource "azurerm_resource_group" "example" {
-  name     = "myResourceGroup987"
+  name     = "myResourceGroup9871"
   location = "East US"  # Replace with your preferred Azure region
 }
 
@@ -28,7 +28,7 @@ resource "azurerm_app_service_plan" "example" {
 
 # Define the web app service
 resource "azurerm_app_service" "example" {
-  name                = "myWebAppService987"
+  name                = "myWebAppService9871"
   location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
   app_service_plan_id = azurerm_app_service_plan.example.id
