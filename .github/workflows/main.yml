@@ -12,6 +12,7 @@ jobs:
         id: provider
         run: |
           echo "::set-output name=provider::azure"
+
       - name: Checkout Repository
         uses: actions/checkout@v2
 
@@ -47,15 +48,19 @@ jobs:
             }
       - name: Fetch Publish Profile
         run: |
-          az login --service-principal -u ce6fc630-ca7a-4041-a380-6d80c5d78ebf -p s0A8Q~MWROMoz9sO5DM~My3GuQpgEHE4K1_AuaYx  --tenant 5a97c230-4719-47ba-a5bf-bf343a0926ec
+          az login --service-principal -u ce6fc630-ca7a-4041-a380-6d80c5d78ebf -p s0A8Q~MWROMoz9sO5DM~My3GuQpgEHE4K1_AuaYx --tenant 5a97c230-4719-47ba-a5bf-bf343a0926ec
           az webapp deployment list-publishing-profiles --name myWebAppService9871 --resource-group myResourceGroup9871 --query "[?publishMethod=='FTP'].publishUrl" -o tsv > publishProfile.txt
           echo "AZUREAPPSERVICE_PUBLISHPROFILE=$(<publishProfile.txt)" >> $GITHUB_ENV
+
       - name: Deploy Java Web App to Azure
         if: ${{ steps.provider.outputs.provider == 'azure' }}
         run: |
-          az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+          cd java-web-app
+          mvn clean install
+          az login --service-principal -u ce6fc630-ca7a-4041-a380-6d80c5d78ebf -p s0A8Q~MWROMoz9sO5DM~My3GuQpgEHE4K1_AuaYx --tenant 5a97c230-4719-47ba-a5bf-bf343a0926ec
           AZUREAPPSERVICE_PUBLISHPROFILE=$(az webapp deployment list-publishing-profiles --name java-aws-azure-my-app-service6 --resource-group azure_aws_task6 --query "[?publishMethod=='FTP'].publishUrl" -o tsv)
           echo "Deploying using fetched publish profile..."
           az webapp deploy --name java-aws-azure-my-app-service6 --slot Production --package '*.jar' --publish-profile "$AZUREAPPSERVICE_PUBLISHPROFILE"
+
       - name: Clean up sensitive files
         run: rm publishProfile.txt
