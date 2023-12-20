@@ -54,4 +54,4 @@ jobs:
           mvn clean install
           az login --service-principal -u ce6fc630-ca7a-4041-a380-6d80c5d78ebf -p s0A8Q~MWROMoz9sO5DM~My3GuQpgEHE4K1_AuaYx --tenant 5a97c230-4719-47ba-a5bf-bf343a0926ec
           echo "Deploying Java application to Azure App Service..."
-          az webapp deployment source config-zip --src ./target/*.jar --resource-group myResourceGroup7722 --name myWebAppService7722 --slot Production --output none
+          az webapp deployment source config-zip --src ./target/*.jar --resource-group myResourceGroup7722 --name myWebAppService7722 --output none
